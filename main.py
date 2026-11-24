@@ -28,6 +28,17 @@ def main():
     path = os.path.join(out_dir, "entry.txt")
     with open(path, "w", encoding="utf-8") as f:
         f.write(REVIEW)
+    # Post-write gate: read the file back and confirm it holds exactly
+    # the review, non-empty and inside the 1-160 character gate, so a
+    # truncated or empty write can never pass silently.
+    with open(path, "r", encoding="utf-8") as f:
+        written = f.read()
+    if written != REVIEW:
+        raise ValueError("written output does not match the review")
+    if not written:
+        raise ValueError("written output is empty")
+    if not (1 <= len(written) <= 160):
+        raise ValueError(f"written output is {len(written)} characters, must be 1-160")
 
 
 if __name__ == "__main__":
